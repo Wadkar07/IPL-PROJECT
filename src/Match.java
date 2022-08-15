@@ -1,8 +1,29 @@
 public class Match {
     int Id;
-    String Team1,Team2;
+    String WinnerTeam;
+    int Year;
+    String Team1;
+    String Team2;
 
-    public int getId() {
+
+    public int getYear(int i) {
+        return Year;
+    }
+
+    public void setYear(int year) {
+        Year = year;
+    }
+
+
+    public String getWinnerTeam(int count) {
+        return WinnerTeam;
+    }
+
+    public void setWinnerTeam(String winnerTeam) {
+        WinnerTeam = winnerTeam;
+    }
+
+    public int getId(int i) {
         return Id;
     }
 
@@ -10,7 +31,7 @@ public class Match {
         Id = id;
     }
 
-    public String getTeam1() {
+    public String getTeam1(int i) {
         return Team1;
     }
 
@@ -18,7 +39,7 @@ public class Match {
         Team1 = team1;
     }
 
-    public String getTeam2() {
+    public String getTeam2(int i) {
         return Team2;
     }
 
