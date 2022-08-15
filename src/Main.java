@@ -27,39 +27,40 @@ public class Main {
         System.out.println(DIVISION_LINE);
         findExtraRunsConcededPerTeam(matches);
         System.out.println(DIVISION_LINE);
-        findMostEconomicalBowlerIn2016(matches,deliveries);
+        findMostEconomicalBowlerIn2016(matches, deliveries);
         System.out.println(DIVISION_LINE);
     }
+
     private static void findExtraRunsConcededPerTeam(List<Match> matches) throws IOException {
-        Set<String> teamsOf2016=new HashSet<>();
-        int index=0,flag=0;
-        for (Match match:matches) {
+        Set<String> teamsOf2016 = new HashSet<>();
+        int index = 0, flag = 0;
+        for (Match match : matches) {
             index++;
-            if(match.getYear(++index)==2016){
-                if(flag==0){
-                    flag=1;
+            if (match.getYear(++index) == 2016) {
+                if (flag == 0) {
+                    flag = 1;
                 }
                 teamsOf2016.add(match.getTeam1(index));
             }
         }
-        HashMap<String,Integer> extrasScoredByIndividualTeam = new HashMap<>();
-        for (String team : teamsOf2016 ){
-            int extraRunCount=0;
+        HashMap<String, Integer> extrasScoredByIndividualTeam = new HashMap<>();
+        for (String team : teamsOf2016) {
+            int extraRunCount = 0;
             BufferedReader reader = new BufferedReader(new FileReader("src/deliveries.csv"));
             String line = reader.readLine();
-            while ((line = reader.readLine())!=null){
+            while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                String Team=data[BATTING_TEAM];
-                int id = Integer.parseInt(data[DELIVERIES_ID]),extraRun=Integer.parseInt(data[EXTRA_RUN]);
-                if(id>576 && Team.equals(team) && extraRun!=0){
-                    extraRunCount+=extraRun;
+                String Team = data[BATTING_TEAM];
+                int id = Integer.parseInt(data[DELIVERIES_ID]), extraRun = Integer.parseInt(data[EXTRA_RUN]);
+                if (id > 576 && Team.equals(team) && extraRun != 0) {
+                    extraRunCount += extraRun;
                 }
-                extrasScoredByIndividualTeam.put(team,extraRunCount);
+                extrasScoredByIndividualTeam.put(team, extraRunCount);
             }
         }
         Set<String> teamName = extrasScoredByIndividualTeam.keySet();
         for (String Team : teamName) {
-            System.out.println(Team+" "+extrasScoredByIndividualTeam.get(Team));
+            System.out.println(Team + " " + extrasScoredByIndividualTeam.get(Team));
         }
     }
 
@@ -78,19 +79,84 @@ public class Main {
     }
 
 
-    private static void findMostEconomicalBowlerIn2016(List<Match> matches, List<Delivery> deliveries) {
+    private static void findMostEconomicalBowlerIn2016(List<Match> matches, List<Delivery> deliveries) throws IOException {
+        int index = 0;
+        ArrayList<Integer> idOf2015Matches = new ArrayList<>();
+        for (Match match : matches) {
+            index++;
+            if (match.getYear(index) == 2015)
+                idOf2015Matches.add(match.getId(index));
+        }
 
+        ArrayList<String> bowlersDelivery = new ArrayList<>();
+        Set<String> bowlersOf2015 = new HashSet<>();
+        for (int id : idOf2015Matches) {
+            BufferedReader reader = new BufferedReader(new FileReader("src/deliveries.csv"));
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (Integer.parseInt(data[DELIVERIES_ID]) == id) {
+                    bowlersDelivery.add(data[BOWLER]);
+                    bowlersOf2015.add(data[BOWLER]);
+                }
+            }
+        }
+
+        ArrayList<String> totalBowler = new ArrayList<>();
+        for (String bowlers : bowlersOf2015) {
+            totalBowler.add(bowlers);
+        }
+
+        ArrayList<String> ballingOrder = new ArrayList<>();
+        ballingOrder.add(totalBowler.get(0));
+        index = 0;
+        for (String bowler : bowlersDelivery) {
+            if (bowler.equals(ballingOrder.get(index)))
+                continue;
+            else {
+                ballingOrder.add(bowler);
+                index++;
+            }
+        }
+        HashMap<String, Integer> overPerBowler = new HashMap<>();
+        HashMap<String, Integer> runsPerBowler = new HashMap<>();
+        HashMap<Double, String> economyTable = new HashMap<>();
+        for (String bowler : totalBowler) {
+            int runs = 0;
+            BufferedReader reader = new BufferedReader(new FileReader("src/deliveries.csv"));
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (Integer.parseInt(data[0]) > 517 && Integer.parseInt(data[0]) < 577 && data[8].equals(bowler)) {
+                    runs += Integer.parseInt(data[17]);
+                }
+            }
+            runsPerBowler.put(bowler, runs);
+        }
+        for (String bowlers : totalBowler) {
+            overPerBowler.put(bowlers, Collections.frequency(ballingOrder, bowlers));
+        }
+        Set<String> oversPerBowler = overPerBowler.keySet();
+        double maximumEco = 0;
+        for (String bowler : oversPerBowler) {
+            double over = overPerBowler.get(bowler), run = runsPerBowler.get(bowler), economy = 0;
+            economy = run / over;
+            economyTable.put(economy, bowler);
+            if (economy > maximumEco)
+                maximumEco = economy;
+        }
+        System.out.println(economyTable.get(maximumEco) + " was the most economic bowler in 2015 with economy " + maximumEco);
     }
 
     private static void findNumberOfMatchesWonPerTeamInAllYears(List<Match> matches) {
-        Set<String> teamsOfAllSeason=new HashSet<>();
+        Set<String> teamsOfAllSeason = new HashSet<>();
         ArrayList<String> matchWinner = new ArrayList<>();
-        int index=0;
-        for (Match match:matches) {
+        int index = 0;
+        for (Match match : matches) {
             teamsOfAllSeason.add(match.getWinnerTeam(++index));
             matchWinner.add(match.getWinnerTeam(++index));
         }
-        for (String team  : teamsOfAllSeason) {
+        for (String team : teamsOfAllSeason) {
             System.out.println(team + " = " + Collections.frequency(matchWinner, team));
         }
     }
@@ -121,11 +187,10 @@ public class Main {
         List<Delivery> deliveries = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader("src/deliveries.csv"));
         String line = reader.readLine();
-        Delivery delivery= null;
-        while ((line = reader.readLine())!=null)
-        {
+        Delivery delivery = null;
+        while ((line = reader.readLine()) != null) {
             String[] data = line.split(",");
-            delivery= new Delivery();
+            delivery = new Delivery();
 
             delivery.setTotalRun(Integer.parseInt(data[TOTAL_RUN]));
             delivery.setBowler(data[BOWLER]);
