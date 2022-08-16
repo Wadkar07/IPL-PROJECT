@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -31,6 +30,43 @@ public class Main {
         findExtraRunsConcededPerTeam(matches, deliveries);
         System.out.println(DIVISION_LINE);
         findMostEconomicalBowlerIn2016(matches, deliveries);
+        System.out.println(DIVISION_LINE);
+        System.out.println("Most Loosing Team In Requested year ");
+        findMostLoosingTeamInRequestedyear(matches);
+    }
+
+    private static void findMostLoosingTeamInRequestedyear(List<Match> matches) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter year : ");
+        int requestedYear= sc.nextInt();
+        ArrayList<String> losingteams=new ArrayList<>();
+        Set<String> teams=new HashSet<>();
+        int index=0;
+        for (Match match : matches) {
+            int year = match.getYear(index);
+            if(year==requestedYear){
+                String loosingTeam;
+                loosingTeam = match.getTeam1(index).equals(match.getWinner(index))?match.getTeam2(index):match.getTeam1(index);
+                losingteams.add(loosingTeam);
+                teams.add(loosingTeam);
+            }
+        }
+        HashMap<String,Integer> loosingTable = new HashMap<>();
+        int maximumLoose=0;
+        String maximumLostTeam=null;
+        for (String team : teams){
+            int loosingFrequency = Collections.frequency(losingteams,team);
+            loosingTable.put(team,loosingFrequency);
+            if (loosingFrequency>maximumLoose){
+                maximumLoose=loosingFrequency;
+                maximumLostTeam = team;
+            }
+        }
+        System.out.println(maximumLostTeam + " lost the most matches in "+requestedYear+" that are "+maximumLoose);
+        Set<String> teamName = loosingTable.keySet();
+        System.out.println("________________________________Loosing summary___________________________");
+        for(String s: teamName)
+            System.out.println(s + " " + loosingTable.get(s));
         System.out.println(DIVISION_LINE);
     }
 
@@ -161,8 +197,8 @@ public class Main {
         ArrayList<String> matchWinner = new ArrayList<>();
         int index = 0;
         for (Match match : matches) {
-            teamsOfAllSeason.add(match.getWinnerTeam(++index));
-            matchWinner.add(match.getWinnerTeam(++index));
+            teamsOfAllSeason.add(match.getWinner(++index));
+            matchWinner.add(match.getWinner(++index));
         }
         for (String team : teamsOfAllSeason) {
             System.out.println(team + " = " + Collections.frequency(matchWinner, team));

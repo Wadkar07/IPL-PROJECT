@@ -15,7 +15,7 @@ public class Match {
     }
 
 
-    public String getWinnerTeam(int count) {
+    public String getWinner(int count) {
         return WinnerTeam;
     }
 
