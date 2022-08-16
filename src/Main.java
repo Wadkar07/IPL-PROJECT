@@ -28,7 +28,7 @@ public class Main {
         findNumberOfMatchesWonPerTeamInAllYears(matches);
         System.out.println(DIVISION_LINE);
         System.out.println("Extra Runs Conceded Per Team");
-        findExtraRunsConcededPerTeam(matches,deliveries);
+        findExtraRunsConcededPerTeam(matches, deliveries);
         System.out.println(DIVISION_LINE);
         findMostEconomicalBowlerIn2016(matches, deliveries);
         System.out.println(DIVISION_LINE);
@@ -49,13 +49,13 @@ public class Main {
         HashMap<String, Integer> extrasScoredByIndividualTeam = new HashMap<>();
         for (String team : teamsOf2016) {
             int extraRunCount = 0;
-            index=0;
-            for (Delivery delivery: deliveries){
+            index = 0;
+            for (Delivery delivery : deliveries) {
                 String battingTeam = delivery.getBattingTeam(index);
                 int id = delivery.getId(index);
                 int extraRun = delivery.getExtraRun(index);
                 index++;
-                if(id>576 && battingTeam.equals(team) && extraRun != 0)
+                if (id > 576 && battingTeam.equals(team) && extraRun != 0)
                     extraRunCount += extraRun;
             }
             extrasScoredByIndividualTeam.put(team, extraRunCount);
@@ -93,12 +93,12 @@ public class Main {
 
         ArrayList<String> bowlersDelivery = new ArrayList<>();
         Set<String> bowlersOf2015 = new HashSet<>();
-        for (int id : idOf2015Matches){
-            index=0;
-            for (Delivery delivery : deliveries){
+        for (int id : idOf2015Matches) {
+            index = 0;
+            for (Delivery delivery : deliveries) {
                 String bowler = deliveries.get(index).getBowler(index);
                 int deliveryId = deliveries.get(index).getId(index);
-                if(id==deliveryId){
+                if (id == deliveryId) {
                     bowlersDelivery.add(bowler);
                     bowlersOf2015.add(bowler);
                 }
@@ -127,17 +127,17 @@ public class Main {
         HashMap<String, Integer> runsPerBowler = new HashMap<>();
         HashMap<Double, String> economyTable = new HashMap<>();
 
-        for(String bowler : totalBowler){
+        for (String bowler : totalBowler) {
             int run = 0;
-            index=0;
-            for(Delivery delivery : deliveries){
+            index = 0;
+            for (Delivery delivery : deliveries) {
                 int id = delivery.getId(index);
                 String deliveryBowler = delivery.getBowler(index);
                 int totalRun = delivery.getTotalRun(index);
-                if(id > 517 && id < 577 &&deliveryBowler.equals(bowler))
+                if (id > 517 && id < 577 && deliveryBowler.equals(bowler))
                     run += totalRun;
             }
-            runsPerBowler.put(bowler,run);
+            runsPerBowler.put(bowler, run);
         }
 
         for (String bowlers : totalBowler) {
