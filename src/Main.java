@@ -181,15 +181,15 @@ public class Main {
         }
 
         Set<String> oversPerBowler = overPerBowler.keySet();
-        double maximumEco = 0;
+        double minmumEco = 100;
         for (String bowler : oversPerBowler) {
             double over = overPerBowler.get(bowler), run = runsPerBowler.get(bowler), economy = 0;
             economy = run / over;
             economyTable.put(economy, bowler);
-            if (economy > maximumEco)
-                maximumEco = economy;
+            if (economy < minmumEco)
+                minmumEco = economy;
         }
-        System.out.println(economyTable.get(maximumEco) + " was the most economic bowler in 2015 with economy " + maximumEco);
+        System.out.println(economyTable.get(minmumEco) + " was the most economic bowler in 2015 with economy " + minmumEco);
     }
 
     private static void findNumberOfMatchesWonPerTeamInAllYears(List<Match> matches) {
