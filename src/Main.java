@@ -170,7 +170,7 @@ public class Main {
                 int id = delivery.getId(index);
                 String deliveryBowler = delivery.getBowler(index);
                 int totalRun = delivery.getTotalRun(index);
-                if (id > 517 && id < 577 && deliveryBowler.equals(bowler))
+                if (idOf2015Matches.contains(id) && deliveryBowler.equals(bowler))
                     run += totalRun;
             }
             runsPerBowler.put(bowler, run);
