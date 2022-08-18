@@ -14,89 +14,75 @@ public class Main {
     public static final int EXTRA_RUN = 16;
     public static final int BOWLER = 8;
     public static final int TOTAL_RUN = 17;
-    public static final String DIVISION_LINE = "_____________________________________________________________________";
     public static final String MATCH_DATA = "src/matches.csv";
     public static final String DELIVERIES_DATA = "src/deliveries.csv";
+    public static final int MAX_NUM = 100;
 
     public static void main(String[] args) throws IOException {
         List<Match> matches = getMatchesData();
         List<Delivery> deliveries = getDeliveriesData();
-        System.out.println(DIVISION_LINE);
-        System.out.println("Number of matches Played Per Year");
+        System.out.println("\nNumber of matches Played Per Year");
         findNumberOfMatchesPlayedPerYear(matches);
-        System.out.println(DIVISION_LINE);
-        System.out.println("Number Of Matches Won Per Team In All Years");
+        System.out.println("\nNumber Of Matches Won Per Team In All Years");
         findNumberOfMatchesWonPerTeamInAllYears(matches);
-        System.out.println(DIVISION_LINE);
-        System.out.println("Extra Runs Conceded Per Team");
+        System.out.println("\nExtra Runs Conceded Per Team");
         findExtraRunsConcededPerTeam(matches, deliveries);
-        System.out.println(DIVISION_LINE);
         findMostEconomicalBowlerIn2016(matches, deliveries);
-        System.out.println(DIVISION_LINE);
-        System.out.println("Most Loosing Team In Requested year ");
-        findMostLoosingTeamInRequestedyear(matches);
+        System.out.print("\nMost Loosing Team In Requested year ");
+        findMostLoosingTeamInRequestedYear(matches);
     }
 
-    private static void findMostLoosingTeamInRequestedyear(List<Match> matches) {
+    private static void findMostLoosingTeamInRequestedYear(List<Match> matches) {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter year : ");
-        int requestedYear= sc.nextInt();
-        ArrayList<String> losingteams=new ArrayList<>();
-        Set<String> teams=new HashSet<>();
-        int index=0;
+        System.out.print("\nEnter year : ");
+        int requestedYear = sc.nextInt();
+        List<String> losingTeams = new ArrayList<>();
+        Set<String> teams = new HashSet<>();
         for (Match match : matches) {
-            int year = match.getYear(index);
-            if(year==requestedYear){
+            int year = match.getYear();
+            if(year == requestedYear){
                 String loosingTeam;
-                loosingTeam = match.getTeam1(index).equals(match.getWinner(index))?match.getTeam2(index):match.getTeam1(index);
-                losingteams.add(loosingTeam);
+                loosingTeam = match.getTeam1().equals(match.getWinner())?match.getTeam2():match.getTeam1();
+                losingTeams.add(loosingTeam);
                 teams.add(loosingTeam);
             }
         }
         HashMap<String,Integer> loosingTable = new HashMap<>();
-        int maximumLoose=0;
-        String maximumLostTeam=null;
+        String maximumLostTeam = null;
+        int maximumLoose = 0;
         for (String team : teams){
-            int loosingFrequency = Collections.frequency(losingteams,team);
+            int loosingFrequency = Collections.frequency(losingTeams,team);
             loosingTable.put(team,loosingFrequency);
-            if (loosingFrequency>maximumLoose){
-                maximumLoose=loosingFrequency;
+            if (loosingFrequency > maximumLoose){
+                maximumLoose = loosingFrequency;
                 maximumLostTeam = team;
             }
         }
-        System.out.println(maximumLostTeam + " lost the most matches in "+requestedYear+" that are "+maximumLoose);
+        System.out.println(maximumLostTeam + " lost the most matches in "+requestedYear+" that are " + maximumLoose);
         Set<String> teamName = loosingTable.keySet();
         System.out.println("________________________________Loosing summary___________________________");
         for(String s: teamName)
             System.out.println(s + " " + loosingTable.get(s));
-        System.out.println(DIVISION_LINE);
     }
 
-    private static void findExtraRunsConcededPerTeam(List<Match> matches, List<Delivery> deliveries) throws IOException {
-        Set<String> teamsOf2016 = new HashSet<>();
-        int index = 0, flag = 0;
+    private static void findExtraRunsConcededPerTeam(List<Match> matches, List<Delivery> deliveries) {
+        HashMap<Integer,String> idAndTeamsOf2016 = new HashMap<>();
         for (Match match : matches) {
-            index++;
-            if (match.getYear(++index) == 2016) {
-                if (flag == 0) {
-                    flag = 1;
-                }
-                teamsOf2016.add(match.getTeam1(index));
-            }
+            if (match.getYear() == 2016)
+                idAndTeamsOf2016.put(match.getId(),match.getTeam1());
         }
+        Set<Integer> idSetOfTeams = idAndTeamsOf2016.keySet();
         HashMap<String, Integer> extrasScoredByIndividualTeam = new HashMap<>();
-        for (String team : teamsOf2016) {
+        for (Integer idOfTeam : idSetOfTeams) {
             int extraRunCount = 0;
-            index = 0;
             for (Delivery delivery : deliveries) {
-                String battingTeam = delivery.getBattingTeam(index);
-                int id = delivery.getId(index);
-                int extraRun = delivery.getExtraRun(index);
-                index++;
-                if (id > 576 && battingTeam.equals(team) && extraRun != 0)
+                String battingTeam = delivery.getBattingTeam();
+                int id = delivery.getId();
+                int extraRun = delivery.getExtraRun();
+                if (idSetOfTeams.contains(id) && battingTeam.equals(idAndTeamsOf2016.get(idOfTeam)) && extraRun != 0)
                     extraRunCount += extraRun;
             }
-            extrasScoredByIndividualTeam.put(team, extraRunCount);
+            extrasScoredByIndividualTeam.put(idAndTeamsOf2016.get(idOfTeam), extraRunCount);
         }
 
         Set<String> teamName = extrasScoredByIndividualTeam.keySet();
@@ -107,11 +93,10 @@ public class Main {
 
     private static void findNumberOfMatchesPlayedPerYear(List<Match> matches) {
         Set<Integer> yearOfMatch = new HashSet<>();
-        ArrayList<Integer> yearsOfMatches = new ArrayList<>();
-        int index = 0;
+        List<Integer> yearsOfMatches = new ArrayList<>();
         for (Match match : matches) {
-            yearOfMatch.add(match.getYear(++index));
-            yearsOfMatches.add(match.getYear(++index));
+            yearOfMatch.add(match.getYear());
+            yearsOfMatches.add(match.getYear());
         }
 
         for (Integer year : yearOfMatch) {
@@ -119,44 +104,47 @@ public class Main {
         }
     }
 
-
-    private static void findMostEconomicalBowlerIn2016(List<Match> matches, List<Delivery> deliveries) throws IOException {
+    private static void findMostEconomicalBowlerIn2016(List<Match> matches, List<Delivery> deliveries) {
         int index = 0;
-        ArrayList<Integer> idOf2015Matches = new ArrayList<>();
+        List<Integer> idOf2015Matches = new ArrayList<>();
         for (Match match : matches) {
             index++;
-            if (match.getYear(index) == 2015)
-                idOf2015Matches.add(match.getId(index));
+            if (match.getYear() == 2015)
+                idOf2015Matches.add(match.getId());
         }
 
-        ArrayList<String> bowlersDelivery = new ArrayList<>();
-        Set<String> bowlersOf2015 = new HashSet<>();
-        for (int id : idOf2015Matches) {
-            index = 0;
-            for (Delivery delivery : deliveries) {
-                String bowler = deliveries.get(index).getBowler(index);
-                int deliveryId = deliveries.get(index).getId(index);
-                if (id == deliveryId) {
-                    bowlersDelivery.add(bowler);
-                    bowlersOf2015.add(bowler);
-                }
-                index++;
+        for (Match match : matches) {
+            if (match.getYear() == 2015) {
+                idOf2015Matches.add(match.getId());
             }
         }
 
-        ArrayList<String> totalBowler = new ArrayList<>();
+        List<String> bowlersDeliveries = new ArrayList<>();
+        Set<String> bowlersOf2015 = new HashSet<>();
+        for (int id : idOf2015Matches) {
+            for (Delivery delivery : deliveries) {
+                String bowler = delivery.getBowler();
+                int deliveryId = delivery.getId();
+                if (id == deliveryId) {
+                    bowlersDeliveries.add(bowler);
+                    bowlersOf2015.add(bowler);
+                }
+            }
+        }
+
+        List<String> totalBowler = new ArrayList<>();
         for (String bowlers : bowlersOf2015) {
             totalBowler.add(bowlers);
         }
 
-        ArrayList<String> ballingOrder = new ArrayList<>();
-        ballingOrder.add(totalBowler.get(0));
+        List<String> bowlingOrder = new ArrayList<>();
+        bowlingOrder.add(totalBowler.get(0));
         index = 0;
-        for (String bowler : bowlersDelivery) {
-            if (bowler.equals(ballingOrder.get(index)))
-                continue;
+        for (String bowler : bowlersDeliveries) {
+            if (bowler.equals(bowlingOrder.get(index))){
+            }
             else {
-                ballingOrder.add(bowler);
+                bowlingOrder.add(bowler);
                 index++;
             }
         }
@@ -167,11 +155,10 @@ public class Main {
 
         for (String bowler : totalBowler) {
             int run = 0;
-            index = 0;
             for (Delivery delivery : deliveries) {
-                int id = delivery.getId(index);
-                String deliveryBowler = delivery.getBowler(index);
-                int totalRun = delivery.getTotalRun(index);
+                int id = delivery.getId();
+                String deliveryBowler = delivery.getBowler();
+                int totalRun = delivery.getTotalRun();
                 if (idOf2015Matches.contains(id) && deliveryBowler.equals(bowler))
                     run += totalRun;
             }
@@ -179,11 +166,11 @@ public class Main {
         }
 
         for (String bowlers : totalBowler) {
-            overPerBowler.put(bowlers, Collections.frequency(ballingOrder, bowlers));
+            overPerBowler.put(bowlers, Collections.frequency(bowlingOrder, bowlers));
         }
 
         Set<String> oversPerBowler = overPerBowler.keySet();
-        double minimumEco = 100;
+        double minimumEco = MAX_NUM;
         for (String bowler : oversPerBowler) {
             double over = overPerBowler.get(bowler), run = runsPerBowler.get(bowler), economy = 0;
             economy = run / over;
@@ -191,16 +178,15 @@ public class Main {
             if (economy < minimumEco)
                 minimumEco = economy;
         }
-        System.out.println(economyTable.get(minimumEco) + " was the most economic bowler in 2015 with economy " + minimumEco);
+        System.out.println("\n"+ economyTable.get(minimumEco) + " was the most economic bowler in 2015 with economy ");
     }
 
     private static void findNumberOfMatchesWonPerTeamInAllYears(List<Match> matches) {
         Set<String> teamsOfAllSeason = new HashSet<>();
         ArrayList<String> matchWinner = new ArrayList<>();
-        int index = 0;
         for (Match match : matches) {
-            teamsOfAllSeason.add(match.getWinner(++index));
-            matchWinner.add(match.getWinner(++index));
+            teamsOfAllSeason.add(match.getWinner());
+            matchWinner.add(match.getWinner());
         }
         for (String team : teamsOfAllSeason) {
             System.out.println(team + " = " + Collections.frequency(matchWinner, team));
@@ -212,9 +198,9 @@ public class Main {
 
         BufferedReader reader = new BufferedReader(new FileReader(MATCH_DATA));
         String line = reader.readLine();
-        Match match = null;
 
         while ((line = reader.readLine()) != null) {
+            Match match;
 
             String[] data = line.split(",");
 
@@ -236,10 +222,9 @@ public class Main {
         BufferedReader reader = new BufferedReader(new FileReader(DELIVERIES_DATA));
         String line = reader.readLine();
 
-        Delivery delivery = null;
         while ((line = reader.readLine()) != null) {
+            Delivery delivery = new Delivery();;
             String[] data = line.split(",");
-            delivery = new Delivery();
             delivery.setId(Integer.parseInt(data[DELIVERIES_ID]));
             delivery.setTotalRun(Integer.parseInt(data[TOTAL_RUN]));
             delivery.setBowler(data[BOWLER]);

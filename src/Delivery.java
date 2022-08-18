@@ -2,7 +2,7 @@ public class Delivery {
     int  totalRun,extraRun, id;
     String bowler,battingTeam;
 
-    public int getExtraRun(int index) {
+    public int getExtraRun() {
         return extraRun;
     }
 
@@ -10,7 +10,7 @@ public class Delivery {
         this.extraRun = extraRun;
     }
 
-    public String getBattingTeam(int index) {
+    public String getBattingTeam() {
         return battingTeam;
     }
 
@@ -18,7 +18,7 @@ public class Delivery {
         this.battingTeam = battingTeam;
     }
 
-    public int getId(int index) {
+    public int getId() {
         return id;
     }
 
@@ -26,9 +26,7 @@ public class Delivery {
         this.id = id;
     }
 
-
-
-    public int getTotalRun(int index) {
+    public int getTotalRun() {
         return totalRun;
     }
 
@@ -36,7 +34,7 @@ public class Delivery {
         this.totalRun = totalRun;
     }
 
-    public String getBowler(int index) {
+    public String getBowler() {
         return bowler;
     }
 

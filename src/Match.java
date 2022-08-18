@@ -1,50 +1,50 @@
 public class Match {
-    int Id;
-    String WinnerTeam;
-    int Year;
-    String Team1;
-    String Team2;
+    int id;
+    String winnerTeam;
+    int year;
+    String team1;
+    String team2;
 
 
-    public int getYear(int i) {
-        return Year;
+    public int getYear() {
+        return year;
     }
 
     public void setYear(int year) {
-        Year = year;
+        this.year = year;
     }
 
 
-    public String getWinner(int count) {
-        return WinnerTeam;
+    public String getWinner() {
+        return winnerTeam;
     }
 
     public void setWinnerTeam(String winnerTeam) {
-        WinnerTeam = winnerTeam;
+        this.winnerTeam = winnerTeam;
     }
 
-    public int getId(int i) {
-        return Id;
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
-    public String getTeam1(int i) {
-        return Team1;
+    public String getTeam1() {
+        return team1;
     }
 
     public void setTeam1(String team1) {
-        Team1 = team1;
+        this.team1 = team1;
     }
 
-    public String getTeam2(int i) {
-        return Team2;
+    public String getTeam2() {
+        return team2;
     }
 
     public void setTeam2(String team2) {
-        Team2 = team2;
+        this.team2 = team2;
     }
 }
 
