@@ -15,6 +15,8 @@ public class Main {
     public static final int BOWLER = 8;
     public static final int TOTAL_RUN = 17;
     public static final String DIVISION_LINE = "_____________________________________________________________________";
+    public static final String MATCH_DATA = "src/matches.csv";
+    public static final String DELIVERIES_DATA = "src/deliveries.csv";
 
     public static void main(String[] args) throws IOException {
         List<Match> matches = getMatchesData();
@@ -208,7 +210,7 @@ public class Main {
     private static List<Match> getMatchesData() throws IOException {
         List<Match> matches = new ArrayList<>();
 
-        BufferedReader reader = new BufferedReader(new FileReader("src/matches.csv"));
+        BufferedReader reader = new BufferedReader(new FileReader(MATCH_DATA));
         String line = reader.readLine();
         Match match = null;
 
@@ -231,7 +233,7 @@ public class Main {
     private static List<Delivery> getDeliveriesData() throws IOException {
         List<Delivery> deliveries = new ArrayList<>();
 
-        BufferedReader reader = new BufferedReader(new FileReader("src/deliveries.csv"));
+        BufferedReader reader = new BufferedReader(new FileReader(DELIVERIES_DATA));
         String line = reader.readLine();
 
         Delivery delivery = null;
