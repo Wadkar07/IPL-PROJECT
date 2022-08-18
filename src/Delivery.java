@@ -1,6 +1,6 @@
 public class Delivery {
-    int  totalRun,extraRun, id;
-    String bowler,battingTeam;
+    protected int  totalRun,extraRun, id;
+    protected String bowler,battingTeam;
 
     public int getExtraRun() {
         return extraRun;

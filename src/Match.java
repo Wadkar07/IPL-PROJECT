@@ -1,9 +1,6 @@
 public class Match {
-    int id;
-    String winnerTeam;
-    int year;
-    String team1;
-    String team2;
+    protected int id,year;
+    protected String winnerTeam, team1, team2;
 
 
     public int getYear() {
