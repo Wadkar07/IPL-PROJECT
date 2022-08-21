@@ -20,13 +20,17 @@ public class Main {
     public static void main(String[] args) throws IOException {
         List<Match> matches = getMatchesData();
         List<Delivery> deliveries = getDeliveriesData();
-        System.out.println("\nNumber of matches Played Per Year");
+        System.out.println("Number of matches Played Per Year ");
         findNumberOfMatchesPlayedPerYear(matches);
+        System.out.println();
         System.out.println("\nNumber Of Matches Won Per Team In All Years");
         findNumberOfMatchesWonPerTeamInAllYears(matches);
+        System.out.println();
         System.out.println("\nExtra Runs Conceded Per Team");
         findExtraRunsConcededPerTeam(matches, deliveries);
-        findMostEconomicalBowlerIn2016(matches, deliveries);
+        System.out.println();
+        findMostEconomicalBowlerIn2015(matches, deliveries);
+        System.out.println();
         System.out.print("\nMost Loosing Team In Requested year ");
         findMostLoosingTeamInRequestedYear(matches);
     }
@@ -35,33 +39,23 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.print("\nEnter year : ");
         int requestedYear = sc.nextInt();
-        List<String> losingTeams = new ArrayList<>();
-        Set<String> teams = new HashSet<>();
+        TreeMap<String,Integer> loosingStatus=new TreeMap<>();
         for (Match match : matches) {
             int year = match.getYear();
             if (year == requestedYear) {
-                String loosingTeam;
-                loosingTeam = match.getTeam1().equals(match.getWinner()) ? match.getTeam2() : match.getTeam1();
-                losingTeams.add(loosingTeam);
-                teams.add(loosingTeam);
+                String loosingTeam= match.getWinner().equals(match.getTeam1())? match.getTeam2() : match.getTeam1();
+                if(loosingStatus.containsKey(loosingTeam))
+                {
+                    loosingStatus.put(loosingTeam, loosingStatus.get(loosingTeam)+1);
+                }
+                else {
+                    loosingStatus.put(loosingTeam, 1);
+                }
             }
         }
-        HashMap<String, Integer> loosingTable = new HashMap<>();
-        String maximumLostTeam = null;
-        int maximumLoose = 0;
-        for (String team : teams) {
-            int loosingFrequency = Collections.frequency(losingTeams, team);
-            loosingTable.put(team, loosingFrequency);
-            if (loosingFrequency > maximumLoose) {
-                maximumLoose = loosingFrequency;
-                maximumLostTeam = team;
-            }
-        }
-        System.out.println(maximumLostTeam + " lost the most matches in " + requestedYear + " that are " + maximumLoose);
-        Set<String> teamName = loosingTable.keySet();
-        System.out.println("________________________________Loosing summary___________________________");
-        for (String s : teamName)
-            System.out.println(s + " " + loosingTable.get(s));
+        loosingStatus.forEach((Team,Lost)->{
+            System.out.println(Team+" : "+Lost);
+        });
     }
 
     private static void findExtraRunsConcededPerTeam(List<Match> matches, List<Delivery> deliveries) {
@@ -70,18 +64,21 @@ public class Main {
             if (match.getYear() == 2016)
                 idAndTeamsOf2016.put(match.getId(), match.getTeam1());
         }
-        Set<Integer> idSetOfTeams = idAndTeamsOf2016.keySet();
         HashMap<String, Integer> extrasScoredByIndividualTeam = new HashMap<>();
-        for (Integer idOfTeam : idSetOfTeams) {
-            int extraRunCount = 0;
             for (Delivery delivery : deliveries) {
-                String battingTeam = delivery.getBattingTeam();
-                int id = delivery.getId();
-                int extraRun = delivery.getExtraRun();
-                if (idSetOfTeams.contains(id) && battingTeam.equals(idAndTeamsOf2016.get(idOfTeam)) && extraRun != 0)
-                    extraRunCount += extraRun;
-            }
-            extrasScoredByIndividualTeam.put(idAndTeamsOf2016.get(idOfTeam), extraRunCount);
+                if(idAndTeamsOf2016.containsKey(delivery.getId())){
+                    String battingTeam = delivery.getBattingTeam();
+                    int extraRun = delivery.getExtraRun();
+                    if (extrasScoredByIndividualTeam.containsKey(battingTeam)){
+                        int extraRunCount = extrasScoredByIndividualTeam.get(battingTeam)+ extraRun;
+                        extrasScoredByIndividualTeam.put(battingTeam,extraRunCount);
+                    }
+                    else {
+                        int extraRunCount = extraRun;
+                        extrasScoredByIndividualTeam.put(battingTeam,extraRunCount);
+                    }
+                }
+//            }
         }
 
         Set<String> teamName = extrasScoredByIndividualTeam.keySet();
@@ -103,7 +100,7 @@ public class Main {
         }
     }
 
-    private static void findMostEconomicalBowlerIn2016(List<Match> matches, List<Delivery> deliveries) {
+    private static void findMostEconomicalBowlerIn2015(List<Match> matches, List<Delivery> deliveries) {
         Set<Integer> idOf2015Matches = new HashSet<>();
         HashMap<String, Integer> bowlersAndRuns = new HashMap<>();
         for (Match match : matches)
