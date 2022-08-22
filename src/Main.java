@@ -35,6 +35,8 @@ public class Main {
         findMostLoosingTeamInRequestedYear(matches);
     }
 
+
+
     private static void findMostLoosingTeamInRequestedYear(List<Match> matches) {
         Scanner sc = new Scanner(System.in);
         System.out.print("\nEnter year : ");
@@ -140,7 +142,6 @@ public class Main {
             System.out.println(team + " = " + Collections.frequency(matchWinner, team));
         }
     }
-
     private static List<Match> getMatchesData() throws IOException {
         List<Match> matches = new ArrayList<>();
 
@@ -182,4 +183,5 @@ public class Main {
         }
         return deliveries;
     }
+
 }
