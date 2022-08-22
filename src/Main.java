@@ -39,23 +39,23 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.print("\nEnter year : ");
         int requestedYear = sc.nextInt();
-        TreeMap<String,Integer> loosingStatus=new TreeMap<>();
+        TreeMap<String, Integer> loosingStatus = new TreeMap<>();
         for (Match match : matches) {
             int year = match.getYear();
             if (year == requestedYear) {
-                String loosingTeam= match.getWinner().equals(match.getTeam1())? match.getTeam2() : match.getTeam1();
-                if(loosingStatus.containsKey(loosingTeam))
-                {
-                    loosingStatus.put(loosingTeam, loosingStatus.get(loosingTeam)+1);
-                }
-                else {
+                String loosingTeam = match.getWinner().equals(match.getTeam1()) ? match.getTeam2() : match.getTeam1();
+                if (loosingStatus.containsKey(loosingTeam)) {
+                    loosingStatus.put(loosingTeam, loosingStatus.get(loosingTeam) + 1);
+                } else {
                     loosingStatus.put(loosingTeam, 1);
                 }
             }
         }
-        loosingStatus.forEach((Team,Lost)->{
-            System.out.println(Team+" : "+Lost);
-        });
+        for (Map.Entry<String, Integer> entry : loosingStatus.entrySet()) {
+            String Team = entry.getKey();
+            Integer Lost = entry.getValue();
+            System.out.println(Team + " : " + Lost);
+        }
     }
 
     private static void findExtraRunsConcededPerTeam(List<Match> matches, List<Delivery> deliveries) {
@@ -65,20 +65,18 @@ public class Main {
                 idAndTeamsOf2016.put(match.getId(), match.getTeam1());
         }
         HashMap<String, Integer> extrasScoredByIndividualTeam = new HashMap<>();
-            for (Delivery delivery : deliveries) {
-                if(idAndTeamsOf2016.containsKey(delivery.getId())){
-                    String battingTeam = delivery.getBattingTeam();
-                    int extraRun = delivery.getExtraRun();
-                    if (extrasScoredByIndividualTeam.containsKey(battingTeam)){
-                        int extraRunCount = extrasScoredByIndividualTeam.get(battingTeam)+ extraRun;
-                        extrasScoredByIndividualTeam.put(battingTeam,extraRunCount);
-                    }
-                    else {
-                        int extraRunCount = extraRun;
-                        extrasScoredByIndividualTeam.put(battingTeam,extraRunCount);
-                    }
+        for (Delivery delivery : deliveries) {
+            if (idAndTeamsOf2016.containsKey(delivery.getId())) {
+                String battingTeam = delivery.getBattingTeam();
+                int extraRun = delivery.getExtraRun();
+                int extraRunCount;
+                if (extrasScoredByIndividualTeam.containsKey(battingTeam)) {
+                    extraRunCount = extrasScoredByIndividualTeam.get(battingTeam) + extraRun;
+                } else {
+                    extraRunCount = extraRun;
                 }
-//            }
+                extrasScoredByIndividualTeam.put(battingTeam, extraRunCount);
+            }
         }
 
         Set<String> teamName = extrasScoredByIndividualTeam.keySet();
@@ -102,7 +100,6 @@ public class Main {
 
     private static void findMostEconomicalBowlerIn2015(List<Match> matches, List<Delivery> deliveries) {
         Set<Integer> idOf2015Matches = new HashSet<>();
-        HashMap<String, Integer> bowlersAndRuns = new HashMap<>();
         for (Match match : matches)
             if (match.getYear() == 2015)
                 idOf2015Matches.add(match.id);
@@ -122,13 +119,13 @@ public class Main {
                 }
             }
         }
-        Map<Double,String> economyTable = new TreeMap<>();
+        Map<Double, String> economyTable = new TreeMap<>();
         Set<String> bowlers = runsPerBowler.keySet();
-        for (String bowler : bowlers){
-            double eco= (runsPerBowler.get(bowler)/(ballsPerBowlers.get(bowler)/6.0));
-            economyTable.put(eco,bowler);
+        for (String bowler : bowlers) {
+            double eco = (runsPerBowler.get(bowler) / (ballsPerBowlers.get(bowler) / 6.0));
+            economyTable.put(eco, bowler);
         }
-        economyTable.forEach((economy,bowler)-> System.out.println(bowler +":"+ economy));
+        economyTable.forEach((economy, bowler) -> System.out.println(bowler + ":" + economy));
 
     }
 
@@ -148,8 +145,8 @@ public class Main {
         List<Match> matches = new ArrayList<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(MATCH_DATA));
-        String line = reader.readLine();
-
+        reader.readLine();
+        String line;
         while ((line = reader.readLine()) != null) {
             Match match;
 
@@ -170,7 +167,8 @@ public class Main {
     private static List<Delivery> getDeliveriesData() throws IOException {
         List<Delivery> deliveries = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader(DELIVERIES_DATA));
-        String line = reader.readLine();
+        reader.readLine();
+        String line;
         while ((line = reader.readLine()) != null) {
             Delivery delivery = new Delivery();
             String[] data = line.split(",");
